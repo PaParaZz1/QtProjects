@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include "hardware_interface.hpp"
+#include "sensorreader.h"
 #include <QMainWindow>
 #include <QTimer>
 
@@ -23,6 +24,7 @@ private:
     QTime *m_time_record;
     bool m_is_start;
 
+    SensorReader* m_sensor_reader;
     ElectricMachine *m_machine1;
     ElectricMachine *m_machine2;
     void initMachineSlider();
@@ -31,6 +33,11 @@ private:
     void destroyTimer();
     void initSupplySwitch();
     void destroySupplySwitch();
+    void initMachineReader();
+    void destroyMachineReader();
+    QString getSensorData();
+signals:
+    void sensorValueChanged();
 private slots:
     void changeMachineSpeed1(int value);
     void changeMachineSpeed2(int value);
@@ -44,6 +51,7 @@ private slots:
     void onButtonBegin();
     void onButtonStop();
     void updateSupplyThreshold();
+    void updateSensorValueShow();
 };
 
 #endif // MAINWINDOW_H

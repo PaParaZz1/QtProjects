@@ -13,13 +13,15 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     m_is_start = false;
     ui->setupUi(this);
+    m_sensor_reader = new SensorReader();
     // init
     initMachineSlider();
     initTimer();
     initSupplySwitch();
+    initMachineReader();
     // hardware
-    m_machine1 = new ElectricMachine(0.0);
-    m_machine2 = new ElectricMachine(0.0);
+    m_machine1 = new ElectricMachine(0.0, true);
+    m_machine2 = new ElectricMachine(0.0, false);
 
     //control
     connect(ui->button_begin, SIGNAL(pressed()), this, SLOT(onButtonBegin()));
@@ -28,8 +30,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
+    m_sensor_reader->quitThread();
     delete ui;
     delete m_machine1;
+    destroyMachineReader();
     destroySupplySwitch();
     destroyTimer();
     destroyMachineSlider();
@@ -117,6 +121,22 @@ void MainWindow::destroySupplySwitch(){
 
 }
 
+void MainWindow::initMachineReader() {
+    QBrush myBrush;
+    QPalette palette;
+    myBrush = QBrush(Qt::blue,Qt::DiagCrossPattern);
+    palette.setBrush( QPalette::Text,  myBrush);
+    ui->real_state1->setPalette(palette);
+    ui->real_state1->setText(QString::fromStdString(m_sensor_reader->getSensorData()));
+        m_sensor_reader->start();
+    connect(m_sensor_reader, SIGNAL(onSensorValueChanged()), this, SLOT(updateSensorValueShow()));
+
+}
+
+void MainWindow::destroyMachineReader() {
+
+}
+
 void MainWindow::setSpeedText1(int value) {
     QString str = QString::number(value);
     ui->machine1_line_edit->setText(str);
@@ -164,4 +184,15 @@ void MainWindow::updateSupplyThreshold() {
         int value = ui->fluid_threshold->value();
         cout<<"changed value"<<value<<endl;
     }
+}
+
+
+void MainWindow::updateSensorValueShow() {
+    QString str = this->getSensorData();
+    ui->real_state1->setText(str);
+    cout <<"nice"<<endl;
+}
+
+QString MainWindow::getSensorData() {
+    return QString::fromStdString(m_sensor_reader->getSensorData());
 }

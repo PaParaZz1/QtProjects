@@ -169,14 +169,14 @@ void CSerial::SendChar(char c)
 
 void CSerial::ChangeSpeed(int speed)
 {
-	// 一旦调节的速度范围在9和49之外，就调节失败
-	if (speed < 9 || speed > 49)
+    // 一旦调节的速度范围在0和255之外，就调节失败
+    if (speed < 0 || speed > 255)
 	{
 		cerr << "This speed is invalid" << endl;
 		return;
 	}
 	// 人为定义一个数据帧头
-	char header = '*';
+    char header = 'a';
 	char data[5];
 	data[0] = header;
 	// 将数据转化成字符串发送
