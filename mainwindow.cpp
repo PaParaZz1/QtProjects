@@ -1,7 +1,10 @@
 #include "mainwindow.h"
 #include "ui_mainwindow_new.h"
+#include "camera.h"
 #include <QHBoxLayout>
 #include <QString>
+#include <QDesktopServices>
+#include <QDir>
 #include <iostream>
 
 using std::cout;
@@ -14,6 +17,7 @@ MainWindow::MainWindow(QWidget *parent) :
     m_is_start = false;
     ui->setupUi(this);
     m_sensor_reader = new SensorReader();
+    m_camera = new camera;
     // init
     initMachineSlider();
     initTimer();
@@ -26,6 +30,14 @@ MainWindow::MainWindow(QWidget *parent) :
     //control
     connect(ui->button_begin, SIGNAL(pressed()), this, SLOT(onButtonBegin()));
     connect(ui->button_stop, SIGNAL(pressed()), this, SLOT(onButtonStop()));
+
+    //camera
+    m_save_path = QString::fromStdString("./");
+    ui->snapshot->setScaledContents(true);
+    ui->view_finder_layout->addWidget(m_camera->m_view_finder);
+    connect(ui->capture_button, SIGNAL(clicked()), this, SLOT(onCapture()));
+    connect(m_camera->m_image_capture, SIGNAL(imageCaptured(int, QImage)), this, SLOT(cameImageCaptured(int,QImage)));
+    connect(ui->open_album, SIGNAL(clicked()), this, SLOT(onOpenImageDir()));
 }
 
 MainWindow::~MainWindow()
@@ -167,6 +179,7 @@ void MainWindow::onButtonBegin() {
     if (!m_is_start) {
         m_is_start = true;
         m_timer->start(1000);
+        m_camera->onBegin();
     }
 }
 
@@ -176,6 +189,7 @@ void MainWindow::onButtonStop() {
         m_timer->stop();
         m_time_record->setHMS(0, 0, 0);
         ui->time_show->setTime(*m_time_record);
+        m_camera->onExit();
     }
 }
 
@@ -189,10 +203,34 @@ void MainWindow::updateSupplyThreshold() {
 
 void MainWindow::updateSensorValueShow() {
     QString str = this->getSensorData();
-    ui->real_state1->setText(str);
-    cout <<"nice"<<endl;
+    ui->real_state1->setText("str");
 }
 
 QString MainWindow::getSensorData() {
     return QString::fromStdString(m_sensor_reader->getSensorData());
+}
+
+void MainWindow::onCapture() {
+    m_camera->onCapture();
+    this->onSave();
+}
+
+void MainWindow::cameImageCaptured(const int id, QImage image) {
+    ui->snapshot->setPixmap(QPixmap::fromImage(image));
+}
+
+void MainWindow::onSave() {
+    const QPixmap *img = ui->snapshot->pixmap();
+    if (img) {
+        qint64 timestamp = QDateTime::currentDateTime().toMSecsSinceEpoch();
+        QString path = m_save_path + (tr("%1").arg(timestamp)) + QString::fromStdString(".jpg");
+        img->save(path);
+    }
+}
+
+void MainWindow::onOpenImageDir() {
+    //QString path=QDir::currentPath();
+    cout << m_save_path.toStdString() <<endl;
+    bool ret = QDesktopServices::openUrl(QUrl(m_save_path, QUrl::TolerantMode));
+    cout << (ret?"nice":"fxxk")<<endl;
 }

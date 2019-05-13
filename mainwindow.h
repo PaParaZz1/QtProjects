@@ -3,12 +3,14 @@
 
 #include "hardware_interface.hpp"
 #include "sensorreader.h"
+#include "camera.h"
 #include <QMainWindow>
 #include <QTimer>
 
 namespace Ui {
 class MainWindow;
 }
+class camera;
 
 class MainWindow : public QMainWindow
 {
@@ -22,7 +24,9 @@ private:
     Ui::MainWindow *ui;
     QTimer *m_timer;
     QTime *m_time_record;
+    camera *m_camera;
     bool m_is_start;
+    QString m_save_path;
 
     SensorReader* m_sensor_reader;
     ElectricMachine *m_machine1;
@@ -52,6 +56,10 @@ private slots:
     void onButtonStop();
     void updateSupplyThreshold();
     void updateSensorValueShow();
+    void onCapture();
+    void cameImageCaptured(const int id, QImage image);
+    void onSave();
+    void onOpenImageDir();
 };
 
 #endif // MAINWINDOW_H
