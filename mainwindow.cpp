@@ -23,6 +23,7 @@ MainWindow::MainWindow(QWidget *parent) :
     initTimer();
     initSupplySwitch();
     initMachineReader();
+
     // hardware
     m_machine1 = new ElectricMachine(0.0, true);
     m_machine2 = new ElectricMachine(0.0, false);
@@ -33,11 +34,14 @@ MainWindow::MainWindow(QWidget *parent) :
 
     //camera
     m_save_path = QString::fromStdString("./");
+    m_capture_gap = 2;
+    m_capture_count = 0;
     ui->snapshot->setScaledContents(true);
     ui->view_finder_layout->addWidget(m_camera->m_view_finder);
     connect(ui->capture_button, SIGNAL(clicked()), this, SLOT(onCapture()));
     connect(m_camera->m_image_capture, SIGNAL(imageCaptured(int, QImage)), this, SLOT(cameImageCaptured(int,QImage)));
     connect(ui->open_album, SIGNAL(clicked()), this, SLOT(onOpenImageDir()));
+    initCaptureGap();
 }
 
 MainWindow::~MainWindow()
@@ -45,6 +49,7 @@ MainWindow::~MainWindow()
     m_sensor_reader->quitThread();
     delete ui;
     delete m_machine1;
+    destroyCaptureGap();
     destroyMachineReader();
     destroySupplySwitch();
     destroyTimer();
@@ -129,6 +134,20 @@ void MainWindow::initSupplySwitch(){
     connect(ui->fluid_threshold, SIGNAL(editingFinished()), this, SLOT(updateSupplyThreshold()));
 }
 
+void MainWindow::initCaptureGap(){
+    QBrush myBrush;
+    QPalette palette;
+    myBrush = QBrush(Qt::blue,Qt::DiagCrossPattern);
+    palette.setBrush( QPalette::Text,  myBrush);
+    ui->capture_gap->setPalette(palette);
+    ui->capture_gap->setText(QString::number(m_capture_gap));
+    connect(ui->capture_gap, SIGNAL(editingFinished()), this, SLOT(updateCaptureGap()));
+}
+
+void MainWindow::destroyCaptureGap(){
+
+}
+
 void MainWindow::destroySupplySwitch(){
 
 }
@@ -173,6 +192,11 @@ void MainWindow::updateTime() {
     *m_time_record = m_time_record->addSecs(1);
     //cout<<m_time_record->currentTime().toString().toInt()<<endl;
     ui->time_show->setTime(*m_time_record);
+    m_capture_count += 1;
+    if (m_capture_count == m_capture_gap) {
+        m_capture_count = 0;
+        this->onCapture();
+    }
 }
 
 void MainWindow::onButtonBegin() {
@@ -224,6 +248,7 @@ void MainWindow::onSave() {
     if (img) {
         qint64 timestamp = QDateTime::currentDateTime().toMSecsSinceEpoch();
         QString path = m_save_path + (tr("%1").arg(timestamp)) + QString::fromStdString(".jpg");
+        cout << "save path:" << path.toStdString() << endl;
         img->save(path);
     }
 }
@@ -233,4 +258,10 @@ void MainWindow::onOpenImageDir() {
     cout << m_save_path.toStdString() <<endl;
     bool ret = QDesktopServices::openUrl(QUrl(m_save_path, QUrl::TolerantMode));
     cout << (ret?"nice":"fxxk")<<endl;
+}
+
+void MainWindow::updateCaptureGap() {
+    int value = ui->capture_gap->text().toInt();
+    m_capture_gap = value;
+    cout << "update value:" << m_capture_gap << endl;
 }

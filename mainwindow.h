@@ -27,6 +27,8 @@ private:
     camera *m_camera;
     bool m_is_start;
     QString m_save_path;
+    int m_capture_gap;
+    int m_capture_count;
 
     SensorReader* m_sensor_reader;
     ElectricMachine *m_machine1;
@@ -39,6 +41,8 @@ private:
     void destroySupplySwitch();
     void initMachineReader();
     void destroyMachineReader();
+    void initCaptureGap();
+    void destroyCaptureGap();
     QString getSensorData();
 signals:
     void sensorValueChanged();
@@ -60,6 +64,7 @@ private slots:
     void cameImageCaptured(const int id, QImage image);
     void onSave();
     void onOpenImageDir();
+    void updateCaptureGap();
 };
 
 #endif // MAINWINDOW_H

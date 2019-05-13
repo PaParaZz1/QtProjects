@@ -34,7 +34,6 @@ public slots:
     void onCapture();
     void onBegin();
     void onExit();
-    void updateCaptureGap();
 };
 
 #endif // CAMERA_H

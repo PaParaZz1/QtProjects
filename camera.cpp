@@ -63,10 +63,3 @@ void camera::onExit() {
     this->close();
 }
 
-
-void camera::updateCaptureGap() {
-    //int value = ui->gap_box->value();
-    int value = 1;
-    m_capture_gap = value;
-    cout << "update value:" << m_capture_gap << endl;
-}
