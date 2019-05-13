@@ -5,6 +5,8 @@
 #-------------------------------------------------
 
 QT       += core gui
+QT       += multimedia
+QT       += multimediawidgets
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -27,14 +29,23 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
     hardware_interface.cpp \
-    Serial.cpp \
-    main_serial.cpp \
+    #Serial.cpp \
+    #main_serial.cpp \
+    sensorreader.cpp \
+    #camera_part.cpp \
+    camera.cpp
+
 
 HEADERS += \
         mainwindow.h \
     datastructure.hpp \
     hardware_interface.hpp \
-    Serial.h \
+    #Serial.h \
+    sensorreader.h \
+    #camera_part.h \
+    camera.h
 
 FORMS += \
-    mainwindow_new.ui
+    mainwindow_new.ui \
+    #camera_part.ui \
+    camera.ui
