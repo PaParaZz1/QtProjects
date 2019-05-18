@@ -38,7 +38,7 @@ void camera::init() {
         cout << "names:" << t.deviceName().toStdString() << endl;
     }
 
-    m_camera = new QCamera(cameras[0], nullptr);
+    m_camera = new QCamera(cameras[1], nullptr);
     m_view_finder = new QCameraViewfinder();
     m_image_capture = new QCameraImageCapture(m_camera);
 

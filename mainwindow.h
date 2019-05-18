@@ -31,7 +31,7 @@ private:
     int m_capture_count;
 
     float m_shear_force;
-    int m_vessel_height;
+    float m_vessel_height;
     int m_vessel_width;
     float m_fluid_viscosity;
     float m_density;

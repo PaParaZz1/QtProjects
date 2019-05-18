@@ -220,7 +220,7 @@ void MainWindow::destroyPumpControl() {
     sprintf(filename, "%s", "danjia");
     fp = fopen(filename, "w");
     fprintf(fp, "shear force:%f\n", m_shear_force);
-    fprintf(fp, "vessel height:%d\n", m_vessel_height);
+    fprintf(fp, "vessel height:%f\n", m_vessel_height);
     fprintf(fp, "vessel width:%d\n", m_vessel_width);
     fprintf(fp, "fluid viscosity:%f\n", m_fluid_viscosity);
     fprintf(fp, "input volume:%f\n", m_input_volume);
@@ -289,7 +289,7 @@ void MainWindow::updateSupplyThreshold() {
 
 void MainWindow::updateSensorValueShow() {
     QString str = this->getSensorData();
-    ui->real_state1->setText("str");
+    ui->real_state1->setText("传感器尚未打开");
 }
 
 QString MainWindow::getSensorData() {
@@ -302,6 +302,8 @@ void MainWindow::onCapture() {
 }
 
 void MainWindow::cameImageCaptured(const int id, QImage image) {
+    cout << image.width() <<"xxx"<<image.height()<<endl;
+    image = image.copy(590, 200, 630, 400);
     ui->snapshot->setPixmap(QPixmap::fromImage(image));
 }
 
@@ -333,7 +335,7 @@ float MainWindow::calFlow() const {
         std::cerr << "ERROR:invalid fluid viscosity" << std::endl;
         return 0.0;
     } else {
-        return (m_shear_force*m_vessel_height*m_vessel_width*m_vessel_width)/(360*m_fluid_viscosity);
+        return (m_shear_force*m_vessel_height*m_vessel_height*m_vessel_width)/(360*m_fluid_viscosity);
     }
 }
 
@@ -344,7 +346,7 @@ void MainWindow::setShearForce() {
 }
 
 void MainWindow::setVesselHeight() {
-    int value = ui->vessel_height_editor->text().toInt();
+    float value = ui->vessel_height_editor->text().toFloat();
     m_vessel_height = value;
     updateFlow();
 }
@@ -388,7 +390,7 @@ void MainWindow::setInjectionVolume() {
 void MainWindow::updateFlow() {
     m_flow = calFlow();
     cout<<"flow:"<<m_flow<<endl;
-    ui->flow_show->setText(QString("%1").arg(m_flow));
+    ui->flow_show->setText(QString("%1").arg(m_flow, 0, 'g', 4));
     // to arduino
     float time;
     time = m_input_volume / m_flow;

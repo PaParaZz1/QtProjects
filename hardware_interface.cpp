@@ -14,7 +14,7 @@ void ElectricMachine::setSpeed(machine_speed_t value1, machine_speed_t value2) {
 }
 
 void ElectricMachine::setTime(int time) {
-    m_serial->ChangeTime(time);
+    //m_serial->ChangeTime(time);
 }
 
 vector<float> Sensor::getData() const {

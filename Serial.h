@@ -1,4 +1,4 @@
-#pragma once
+
 
 #include <TCHAR.h>
 #include <windows.h>

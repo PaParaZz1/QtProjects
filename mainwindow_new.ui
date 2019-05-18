@@ -452,7 +452,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>实时流量(mL/min)</string>
+     <string>实时流量(mL/s)</string>
     </property>
    </widget>
    <widget class="QLabel" name="input_volume">
