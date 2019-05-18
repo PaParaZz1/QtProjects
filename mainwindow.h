@@ -29,6 +29,13 @@ private:
     QString m_save_path;
     int m_capture_gap;
     int m_capture_count;
+    float m_shear_force;
+    int m_vessel_height;
+    int m_vessel_width;
+    float m_fluid_viscosity;
+    float m_density;
+    int m_injection_volume;
+    int m_injection_radius;
 
     SensorReader* m_sensor_reader;
     ElectricMachine *m_machine1;
@@ -44,6 +51,8 @@ private:
     void initCaptureGap();
     void destroyCaptureGap();
     QString getSensorData();
+    void initPumpControl();
+    void destroyPumpControl();
 signals:
     void sensorValueChanged();
 private slots:

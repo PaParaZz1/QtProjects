@@ -42,6 +42,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(m_camera->m_image_capture, SIGNAL(imageCaptured(int, QImage)), this, SLOT(cameImageCaptured(int,QImage)));
     connect(ui->open_album, SIGNAL(clicked()), this, SLOT(onOpenImageDir()));
     initCaptureGap();
+
+    //pump
+    initPumpControl();
 }
 
 MainWindow::~MainWindow()
@@ -49,6 +52,7 @@ MainWindow::~MainWindow()
     m_sensor_reader->quitThread();
     delete ui;
     delete m_machine1;
+    destroyPumpControl();
     destroyCaptureGap();
     destroyMachineReader();
     destroySupplySwitch();
@@ -165,6 +169,21 @@ void MainWindow::initMachineReader() {
 }
 
 void MainWindow::destroyMachineReader() {
+
+}
+
+void MainWindow::initPumpControl() {
+    m_shear_force = 0;
+    m_vessel_height = 0;
+    m_vessel_width = 0;
+    m_fluid_viscosity = 0;
+    m_density = 0;
+
+    m_injection_radius = 0;
+    m_injection_radius = 0;
+}
+
+void MainWindow::destroyPumpControl() {
 
 }
 
