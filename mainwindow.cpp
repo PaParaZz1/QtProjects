@@ -178,9 +178,32 @@ void MainWindow::initPumpControl() {
     m_vessel_width = 0;
     m_fluid_viscosity = 0;
     m_density = 0;
+    m_input_volume = 0;
+    m_injection_volume = 0;
+    m_injection_radius = 0;
+    QBrush myBrush;
+    QPalette palette;
+    myBrush = QBrush(Qt::blue,Qt::DiagCrossPattern);
+    palette.setBrush( QPalette::Text,  myBrush);
+    ui->shear_force_editor->setPalette(palette);
+    ui->vessel_height_editor->setPalette(palette);
+    ui->vessel_width_editor->setPalette(palette);
+    ui->density_editor->setPalette(palette);
+    ui->fluid_viscousity_editor->setPalette(palette);
+    ui->input_volume_editor->setPalette(palette);
+    ui->injection_radius_editor->setPalette(palette);
+    ui->injection_volume_editor->setPalette(palette);
 
-    m_injection_radius = 0;
-    m_injection_radius = 0;
+    ui->flow_show->setPalette(palette);
+
+    connect(ui->shear_force_editor, SIGNAL(editingFinished()), this, SLOT(setShearForce()));
+    connect(ui->vessel_height_editor, SIGNAL(editingFinished()), this, SLOT(setVesselHeight()));
+    connect(ui->vessel_width_editor, SIGNAL(editingFinished()), this, SLOT(setVesselWidth()));
+    connect(ui->density_editor, SIGNAL(editingFinished()), this, SLOT(setDensity()));
+    connect(ui->input_volume_editor, SIGNAL(editingFinished()), this, SLOT(setInputVolume()));
+    connect(ui->fluid_viscousity_editor, SIGNAL(editingFinished()), this, SLOT(setFluidViscosity()));
+    connect(ui->injection_volume_editor, SIGNAL(editingFinished()), this, SLOT(setInjectionVolume()));
+    connect(ui->injection_radius_editor, SIGNAL(editingFinished()), this, SLOT(setInjectionRadius()));
 }
 
 void MainWindow::destroyPumpControl() {
@@ -284,3 +307,68 @@ void MainWindow::updateCaptureGap() {
     m_capture_gap = value;
     cout << "update value:" << m_capture_gap << endl;
 }
+#define ABS(v) ((v)>=0 ? (v) : (-(v)))
+float MainWindow::calFlow() const {
+    if (ABS(m_fluid_viscosity) < 1e-8) {
+        std::cerr << "ERROR:invalid fluid viscosity" << std::endl;
+        return 0.0;
+    } else {
+        return (m_shear_force*m_vessel_height*m_vessel_width*m_vessel_width)/(360*m_fluid_viscosity);
+    }
+}
+
+void MainWindow::setShearForce() {
+    float value = ui->shear_force_editor->text().toFloat();
+    m_shear_force = value;
+    updateFlow();
+}
+
+void MainWindow::setVesselHeight() {
+    int value = ui->vessel_height_editor->text().toInt();
+    m_vessel_height = value;
+    updateFlow();
+}
+
+void MainWindow::setVesselWidth() {
+    int value = ui->vessel_width_editor->text().toFloat();
+    m_vessel_width = value;
+    updateFlow();
+}
+
+void MainWindow::setDensity() {
+    float value = ui->density_editor->text().toFloat();
+    m_density = value;
+    updateFlow();
+}
+
+void MainWindow::setFluidViscosity() {
+    float value = ui->fluid_viscousity_editor->text().toFloat();
+    m_fluid_viscosity = value;
+    updateFlow();
+}
+
+void MainWindow::setInputVolume() {
+    float value = ui->input_volume_editor->text().toFloat();
+    m_input_volume = value;
+    updateFlow();
+}
+
+void MainWindow::setInjectionRadius() {
+    int value = ui->injection_radius_editor->text().toInt();
+    m_injection_radius = value;
+    updateFlow();
+}
+
+void MainWindow::setInjectionVolume() {
+    int value = ui->injection_volume_editor->text().toInt();
+    m_injection_volume = value;
+    updateFlow();
+}
+
+void MainWindow::updateFlow() {
+    m_flow = calFlow();
+    cout<<"flow:"<<m_flow<<endl;
+    ui->flow_show->setText(QString("%1").arg(m_flow));
+    // to arduino
+}
+

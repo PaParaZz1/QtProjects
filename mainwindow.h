@@ -29,13 +29,17 @@ private:
     QString m_save_path;
     int m_capture_gap;
     int m_capture_count;
+
     float m_shear_force;
     int m_vessel_height;
     int m_vessel_width;
     float m_fluid_viscosity;
     float m_density;
-    int m_injection_volume;
+    float m_input_volume;
     int m_injection_radius;
+    int m_injection_volume;
+
+    float m_flow;
 
     SensorReader* m_sensor_reader;
     ElectricMachine *m_machine1;
@@ -50,9 +54,12 @@ private:
     void destroyMachineReader();
     void initCaptureGap();
     void destroyCaptureGap();
-    QString getSensorData();
     void initPumpControl();
     void destroyPumpControl();
+
+    QString getSensorData();
+    float calFlow() const;
+    void updateFlow();
 signals:
     void sensorValueChanged();
 private slots:
@@ -74,6 +81,14 @@ private slots:
     void onSave();
     void onOpenImageDir();
     void updateCaptureGap();
+    void setShearForce();
+    void setVesselHeight();
+    void setVesselWidth();
+    void setFluidViscosity();
+    void setDensity();
+    void setInputVolume();
+    void setInjectionRadius();
+    void setInjectionVolume();
 };
 
 #endif // MAINWINDOW_H
