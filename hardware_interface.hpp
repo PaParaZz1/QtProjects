@@ -1,6 +1,7 @@
 #ifndef HARDWARE_INTERFACE_HPP
 #define HARDWARE_INTERFACE_HPP
 #include "datastructure.hpp"
+#include "Serial.h"
 #include <vector>
 #include <string>
 
@@ -11,13 +12,23 @@ class ElectricMachine {
 public:
     ElectricMachine(machine_speed_t init_value, bool flag) {
         m_state.real_speed = init_value;
+        if (flag) {
+            m_serial = new CSerial(true);
+            m_serial->OpenSerialPort(_T("COM2:"), 115200, 8, 1);
+        } else {
+            m_serial = new CSerial(false);
+        }
     }
     ~ElectricMachine() {
-
+        if (m_serial) {
+            delete m_serial;
+        }
     }
-    void setSpeed(machine_speed_t value);
+    void setSpeed(machine_speed_t value1, machine_speed_t value2);
+    void setTime(int time);
 private:
     electric_machine_state_t m_state;
+    CSerial* m_serial;
 };
 
 class Sensor {
@@ -39,7 +50,7 @@ public:
     }
     vector<float> getData() const;
     void setData(const vector<float>& data);
-    string& toString();
+    string toString();
 private:
     float a_x;
     float a_y;

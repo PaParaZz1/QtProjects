@@ -7,6 +7,7 @@
 #include <vector>
 
 using std::vector;
+using std::string;
 
 
 class SensorReader : public QThread
@@ -29,4 +30,5 @@ private:
     bool m_isquit;
 };
 
+extern SensorReader* handle_sensro_reader;
 #endif // SENSORREADER_H

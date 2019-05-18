@@ -8,8 +8,13 @@ using std::endl;
 using std::vector;
 using std::string;
 
-void ElectricMachine::setSpeed(machine_speed_t value) {
+void ElectricMachine::setSpeed(machine_speed_t value1, machine_speed_t value2) {
     //cout << "machine speed" << value << endl;
+    //m_serial->ChangeSpeed(value1, value2);
+}
+
+void ElectricMachine::setTime(int time) {
+    m_serial->ChangeTime(time);
 }
 
 vector<float> Sensor::getData() const {
@@ -40,7 +45,7 @@ void Sensor::setData(const vector<float>& data) {
     T = data[9];
 }
 
-string& Sensor::toString() {
+string Sensor::toString() {
     string ret = "";
     ret += "a_x:" + std::to_string(a_x) + "\n";
     ret += "a_y:" + std::to_string(a_y) + "\n";

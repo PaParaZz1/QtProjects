@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow_new.h"
 #include "camera.h"
+#include "sensorreader.h"
 #include <QHBoxLayout>
 #include <QString>
 #include <QDesktopServices>
@@ -61,21 +62,28 @@ MainWindow::~MainWindow()
 }
 
 void MainWindow::changeMachineSpeed1(int value) {
-    m_machine1->setSpeed(value*1.0);
+    float value1 = ui->machine1_line_edit->text().toInt();
+    float value2 = ui->machine2_line_edit->text().toInt();
+    m_machine1->setSpeed(value1, value2);
 }
 
 void MainWindow::changeMachineSpeed1() {
-    float value = ui->machine1_line_edit->text().toFloat();
-    m_machine1->setSpeed(value);
+    float value1 = ui->machine1_line_edit->text().toInt();
+    float value2 = ui->machine2_line_edit->text().toInt();
+    m_machine1->setSpeed(value1, value2);
 }
 
 void MainWindow::changeMachineSpeed2(int value) {
-    m_machine2->setSpeed(value*1.0);
+    float value1 = ui->machine1_line_edit->text().toInt();
+    float value2 = ui->machine2_line_edit->text().toInt();
+    m_machine1->setSpeed(value1, value2);
 }
 
+
 void MainWindow::changeMachineSpeed2() {
-    float value = ui->machine2_line_edit->text().toFloat();
-    m_machine2->setSpeed(value);
+    float value1 = ui->machine1_line_edit->text().toInt();
+    float value2 = ui->machine2_line_edit->text().toInt();
+    m_machine1->setSpeed(value1, value2);
 }
 
 void MainWindow::initMachineSlider() {
@@ -163,8 +171,8 @@ void MainWindow::initMachineReader() {
     palette.setBrush( QPalette::Text,  myBrush);
     ui->real_state1->setPalette(palette);
     ui->real_state1->setText(QString::fromStdString(m_sensor_reader->getSensorData()));
-        m_sensor_reader->start();
     connect(m_sensor_reader, SIGNAL(onSensorValueChanged()), this, SLOT(updateSensorValueShow()));
+    m_sensor_reader->start();
 
 }
 
@@ -207,7 +215,19 @@ void MainWindow::initPumpControl() {
 }
 
 void MainWindow::destroyPumpControl() {
-
+    FILE* fp;
+    char filename[1024];
+    sprintf(filename, "%s", "danjia");
+    fp = fopen(filename, "w");
+    fprintf(fp, "shear force:%f\n", m_shear_force);
+    fprintf(fp, "vessel height:%d\n", m_vessel_height);
+    fprintf(fp, "vessel width:%d\n", m_vessel_width);
+    fprintf(fp, "fluid viscosity:%f\n", m_fluid_viscosity);
+    fprintf(fp, "input volume:%f\n", m_input_volume);
+    fprintf(fp, "injection volume:%f\n", m_injection_volume);
+    fprintf(fp, "injection radius:%d\n", m_injection_radius);
+    fprintf(fp, "flow:%f\n", m_flow);
+    fclose(fp);
 }
 
 void MainWindow::setSpeedText1(int value) {
@@ -370,5 +390,8 @@ void MainWindow::updateFlow() {
     cout<<"flow:"<<m_flow<<endl;
     ui->flow_show->setText(QString("%1").arg(m_flow));
     // to arduino
+    float time;
+    time = m_input_volume / m_flow;
+    int ms_time = (int)(time*1000);
 }
 

@@ -185,3 +185,23 @@ void CSerial::ChangeSpeed(int speed)
 	for (int i = 0; i < 3; ++i)
 		SendChar(data[i]);
 }
+
+void CSerial::ChangeTime(int time_int)
+{
+    if(time_int <= 100 || time_int >= 1000000)
+    {
+        cerr << "This time is invalid" << endl;
+        return;
+    }
+    char header = 't';
+    char data[7];
+    data[0] = header;
+    data[1] = '0' + int(time_int / 100000);
+    data[2] = '0' + int(int(time_int / 10000) % 10);
+    data[3] = '0' + int(int(time_int / 1000) % 10);
+    data[4] = '0' + int(int(time_int / 100) % 10);
+    data[5] = '0' + int(int(time_int / 10) % 10);
+    data[6] = '0' + time_int % 10;
+    for (int i = 0; i < 7;++i)
+        SendChar(data[i]);
+}

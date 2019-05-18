@@ -33,3 +33,6 @@ void SensorReader::run() {
 void SensorReader::setSensorData(const vector<float>& data) {
     m_sensor->setData(data);
 }
+
+
+SensorReader* handle_sensor_reader = NULL;

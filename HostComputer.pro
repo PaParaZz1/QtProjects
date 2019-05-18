@@ -29,7 +29,7 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
     hardware_interface.cpp \
-    #Serial.cpp \
+    Serial.cpp \
     #main_serial.cpp \
     sensorreader.cpp \
     #camera_part.cpp \
@@ -40,7 +40,7 @@ HEADERS += \
         mainwindow.h \
     datastructure.hpp \
     hardware_interface.hpp \
-    #Serial.h \
+    Serial.h \
     sensorreader.h \
     #camera_part.h \
     camera.h
